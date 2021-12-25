@@ -48,40 +48,50 @@ try:
             ))
             print("{} response: {}".format(mode, list(raw_response)))
         except:
-            pass
+            print("Failed to stop")
 
-        mode = 'Start'
-        config = config_all[mode]
-        print("Starting...")
-        raw_response = device.execute(ShdlcCommand(
-            id=config['command'],
-            data=config['data'],
-            max_response_time=10,
-        ))
-        print("{} response: {}".format(mode, list(raw_response)))
-        time.sleep(15)
+        try:
+            mode = 'Start'
+            config = config_all[mode]
+            print("Starting...")
+            raw_response = device.execute(ShdlcCommand(
+                id=config['command'],
+                data=config['data'],
+                max_response_time=10,
+            ))
+            print("{} response: {}".format(mode, list(raw_response)))
+        except:
+            print('Failed to start')
+        else:
+            time.sleep(15)
 
-        mode = 'Read'
-        config = config_all[mode]
-        print("Reading...")
-        raw_measurements = device.execute(ShdlcCommand(
-            id=config['command'],
-            data=config['data'],
-            max_response_time=10,
-        ))
-        print("{} response: {}".format(mode, list(raw_response)))
-        time.sleep(1)
+            try:
+                mode = 'Read'
+                config = config_all[mode]
+                print("Reading...")
+                raw_measurements = device.execute(ShdlcCommand(
+                    id=config['command'],
+                    data=config['data'],
+                    max_response_time=10,
+                ))
+                print("{} response: {}".format(mode, list(raw_response)))
+            except:
+                print('Failed to read')
+            else:
 
-        mode = 'Stop'
-        config = config_all[mode]
-        print("Stopping...")
-        raw_response = device.execute(ShdlcCommand(
-            id=config['command'],
-            data=config['data'],
-            max_response_time=10,
-        ))
-        print("{} response: {}".format(mode, list(raw_response)))
-
+                time.sleep(1)
+                try:
+                    mode = 'Stop'
+                    config = config_all[mode]
+                    print("Stopping...")
+                    raw_response = device.execute(ShdlcCommand(
+                        id=config['command'],
+                        data=config['data'],
+                        max_response_time=10,
+                    ))
+                    print("{} response: {}".format(mode, list(raw_response)))
+                except:
+                    print('Failed to stop')
     values = []
     for i in range(0, 37, 4):
         val = bytearray(raw_response[i:i + 4])
