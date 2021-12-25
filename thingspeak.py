@@ -38,6 +38,7 @@ try:
         device = ShdlcDevice(ShdlcConnection(port), slave_address=0)
 
         try:
+            print("Stopping...")
             mode = 'Stop'
             config = config_all[mode]
             raw_response = device.execute(ShdlcCommand(
@@ -51,15 +52,18 @@ try:
 
         mode = 'Start'
         config = config_all[mode]
+        print("Starting...")
         raw_response = device.execute(ShdlcCommand(
             id=config['command'],
             data=config['data'],
             max_response_time=10,
         ))
         print("{} response: {}".format(mode, list(raw_response)))
-        time.sleep(5)
+        time.sleep(15)
+
         mode = 'Read'
         config = config_all[mode]
+        print("Reading...")
         raw_measurements = device.execute(ShdlcCommand(
             id=config['command'],
             data=config['data'],
@@ -67,8 +71,10 @@ try:
         ))
         print("{} response: {}".format(mode, list(raw_response)))
         time.sleep(1)
+
         mode = 'Stop'
         config = config_all[mode]
+        print("Stopping...")
         raw_response = device.execute(ShdlcCommand(
             id=config['command'],
             data=config['data'],
