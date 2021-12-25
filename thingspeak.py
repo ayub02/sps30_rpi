@@ -46,7 +46,6 @@ try:
                 data=config['data'],
                 max_response_time=10,
             ))
-            print("{} response: {}".format(mode, list(raw_response)))
         except:
             print("Failed to stop")
         time.sleep(2)
@@ -59,7 +58,6 @@ try:
                 data=config['data'],
                 max_response_time=10,
             ))
-            print("{} response: {}".format(mode, list(raw_response)))
         except:
             print('Failed to start')
         else:
@@ -74,7 +72,6 @@ try:
                     data=config['data'],
                     max_response_time=10,
                 ))
-                print("{} response: {}".format(mode, list(raw_response)))
             except:
                 print('Failed to read')
             else:
@@ -89,12 +86,11 @@ try:
                         data=config['data'],
                         max_response_time=10,
                     ))
-                    print("{} response: {}".format(mode, list(raw_response)))
                 except:
                     print('Failed to stop')
     values = []
     for i in range(0, 37, 4):
-        val = bytearray(raw_response[i:i + 4])
+        val = bytearray(raw_measurements[i:i + 4])
         values.append((struct.unpack('>f', val))[0])
         print(values[-1])
 
