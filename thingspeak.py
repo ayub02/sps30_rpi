@@ -49,7 +49,7 @@ try:
             print("{} response: {}".format(mode, list(raw_response)))
         except:
             print("Failed to stop")
-
+        time.sleep(2)
         try:
             mode = 'Start'
             config = config_all[mode]
