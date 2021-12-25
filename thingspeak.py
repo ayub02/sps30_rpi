@@ -45,7 +45,7 @@ try:
             max_response_time=10,
         ))
         print("{} response: {}".format(mode, list(raw_response)))
-
+        time.sleep(5)
         mode = 'Read'
         config = config_all[mode]
         raw_measurements = device.execute(ShdlcCommand(
@@ -54,7 +54,7 @@ try:
             max_response_time=10,
         ))
         print("{} response: {}".format(mode, list(raw_response)))
-
+        time.sleep(1)
         mode = 'Stop'
         config = config_all[mode]
         raw_response = device.execute(ShdlcCommand(
