@@ -37,6 +37,18 @@ try:
     with ShdlcSerialPort(port='/dev/ttyS0', baudrate=115200) as port:
         device = ShdlcDevice(ShdlcConnection(port), slave_address=0)
 
+        try:
+            mode = 'Stop'
+            config = config_all[mode]
+            raw_response = device.execute(ShdlcCommand(
+                id=config['command'],
+                data=config['data'],
+                max_response_time=10,
+            ))
+            print("{} response: {}".format(mode, list(raw_response)))
+        except:
+            pass
+
         mode = 'Start'
         config = config_all[mode]
         raw_response = device.execute(ShdlcCommand(
