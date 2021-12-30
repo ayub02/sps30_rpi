@@ -4,34 +4,13 @@ from sensirion_shdlc_driver.command import ShdlcCommand
 import logging
 import requests
 import time
+from config import constants, modes
 
 write_key = "IZZMMWE0GBXCN096"
 channel_id = 1617989
 write_url = "https://api.thingspeak.com/update"
 
 logging.basicConfig(level=logging.DEBUG)
-config_all = {
-    'Start': {
-        'command': 0x00,
-        'data': b"\x01\x03"
-    },
-    'Stop': {
-        'command': 0x01,
-        'data': b""
-    },
-    'Read': {
-        'command': 0x03,
-        'data': b""
-    },
-    'Clean': {
-        'command': 0x56,
-        'data': b""
-    },
-    'Reset': {
-        'command': 0xD3,
-        'data': b""
-    }
-}
 
 
 def read_values(_raw_data):
@@ -44,7 +23,7 @@ def read_values(_raw_data):
 
 
 def exec_mode(mode):
-    config = config_all[mode]
+    config = modes[mode]
     print('Trying to {}'.format(mode))
     try:
         raw_response = device.execute(ShdlcCommand(
@@ -58,26 +37,22 @@ def exec_mode(mode):
         return raw_response
 
 
-try:
-    with ShdlcSerialPort(port='/dev/ttyS0', baudrate=115200) as port:
-        device = ShdlcDevice(ShdlcConnection(port), slave_address=0)
+with ShdlcSerialPort(port='/dev/ttyS0', baudrate=115200) as port:
+    device = ShdlcDevice(ShdlcConnection(port), slave_address=0)
 
-        exec_mode('Start')
-        time.sleep(4)
+    exec_mode('Start')
+    time.sleep(constants["delay_after_start"])
 
-        pm2p5_all = []
-        for k in range(10):
-            raw_data = exec_mode('Read')
-            pm2p5_all.append(read_values(raw_data))
-            time.sleep(2)
-        pm2p5 = sum(pm2p5_all) / len(pm2p5_all)
+    pm2p5_all = []
+    for k in range(int(constants["num_of_read"])):
+        pm2p5_all.append(read_values(exec_mode('Read')))
+        time.sleep(constants["delay_between_read"])
+    pm2p5 = sum(pm2p5_all) / len(pm2p5_all)
 
-        exec_mode('Stop')
-        time.sleep(2)
+    exec_mode('Stop')
+    time.sleep(constants["delay_after_stop"])
 
-    params = {"api_key": write_key, "field1": round(pm2p5)}
-    response = requests.post(write_url, params=params)
-    print(response.status_code)
+params = {"api_key": write_key, "field1": round(pm2p5)}
+response = requests.post(write_url, params=params)
+print(response.status_code)
 
-except:
-    pass
